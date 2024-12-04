@@ -4,8 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import ReactMarkdown from 'react-markdown';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import remarkGfm from 'remark-gfm';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 
@@ -108,6 +107,38 @@ export const ChatBox: React.FC<ChatBoxProps> = ({ prompt }) => {
     setUserInput(''); // Clear the input field
   };
 
+  const CodeBlock = ({ node, inline, className, children, ...props }) => {
+    const [isCopied, setIsCopied] = useState(false);
+    const language = className ? className.replace('language-', '') : '';
+
+    const handleCopy = () => {
+      navigator.clipboard.writeText(children).then(() => {
+        setIsCopied(true);
+        setTimeout(() => setIsCopied(false), 2000); // Reset after 2 seconds
+      });
+    };
+
+    return !inline ? (
+      <div className="relative">
+        <pre className="rounded-lg bg-muted p-4 font-mono text-sm">
+          <code className={className} {...props}>
+            {children}
+          </code>
+        </pre>
+        <button
+          onClick={handleCopy}
+          className="absolute top-2 right-2 text-xs bg-primary text-primary-foreground px-2 py-1 rounded"
+        >
+          {isCopied ? 'Copied' : 'Copy'}
+        </button>
+      </div>
+    ) : (
+      <code className="bg-gray-200 dark:bg-gray-800 px-1 rounded" {...props}>
+        {children}
+      </code>
+    );
+  };
+
   return (
     <div className="flex flex-col my-4 space-y-4">
       <div className="flex space-x-2">
@@ -119,7 +150,7 @@ export const ChatBox: React.FC<ChatBoxProps> = ({ prompt }) => {
           placeholder="Type your message..."
           disabled={isLoading}
         />
-        <Button variant="secondary" onClick={handleChatSubmit} disabled={isLoading}>
+        <Button onClick={handleChatSubmit} disabled={isLoading}>
           <FontAwesomeIcon icon={faPaperPlane} />
         </Button>
       </div>
@@ -131,39 +162,16 @@ export const ChatBox: React.FC<ChatBoxProps> = ({ prompt }) => {
       {botResponse && (
         <Card>
           <CardContent>
-            <ReactMarkdown
-              components={{
-                ul: ({ node, ...props }) => <ul {...props} className="list-disc list-inside" />,
-                li: ({ node, ...props }) => <li {...props} className="list-disc list-inside" />,
-                a: ({ node, ...props }) => (
-                  <a {...props} className="text-blue-500 hover:underline" />
-                ),
-                pre: ({ node, ...props }) => <pre {...props} className="overflow-auto" />,
-                code: ({ node, inline, className, children, ...props }) => {
-                  const match = /language-(\w+)/.exec(className || '');
-                  return !inline && match ? (
-                    <SyntaxHighlighter
-                      style={oneDark}
-                      language={match[1]}
-                      PreTag="div"
-                      customStyle={{ margin: 0 }}
-                    >
-                      {String(children).replace(/\n$/, '')}
-                    </SyntaxHighlighter>
-                  ) : (
-                    <code
-                      className={`p-1 bg-gray-200 text-sm rounded ${className}`}
-                      {...props}
-                    >
-                      {children}
-                    </code>
-                  );
-                },
-                p: ({ node, children, ...props }) => <p {...props}>{children}</p>,
-              }}
-            >
-              {botResponse}
-            </ReactMarkdown>
+            <div className="prose dark:prose-dark">
+              <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
+                components={{
+                  code: CodeBlock,
+                }}
+              >
+                {botResponse}
+              </ReactMarkdown>
+            </div>
           </CardContent>
         </Card>
       )}
