@@ -12,6 +12,7 @@ import CodeSnippet from './code-snippet';
 import { CopyBox } from './ui/copy-box';
 import { Icons } from './ui/icons';
 import { ChatBox } from './chatbox';
+import { URLBox } from './ui/url-box';
 
 import {
   Sheet,
@@ -129,24 +130,22 @@ ALWAYS return valid markdown.
                 <Label>References</Label>
                 <div className="flex flex-wrap">
                   {activeElement?.learnUrl && (
-                    <a
-                      target="_blank"
-                      href={activeElement?.learnUrl}
-                      className="flex items-center text-sm border p-2 rounded-lg mr-4 mb-2 hover:border-gray-200 transition-all"
-                    >
-                      <Icons.Microsoft width={16} height={16} className="mr-2" />
-                      <span>{isMobile ? 'Learn' : 'Microsoft Learn'}</span>
-                    </a>
+                    <URLBox
+                      href={activeElement.learnUrl}
+                      text={isMobile ? 'Learn' : 'Microsoft Learn'}
+                      size="md"
+                      className="mr-4 mb-2"
+                      icon={<Icons.Microsoft width={20} height={20} />}
+                    />
                   )}
                   {activeElement?.pricingReferenceUrl && (
-                    <a
-                      target="_blank"
-                      href={activeElement?.pricingReferenceUrl}
-                      className="flex items-center text-sm border p-2 rounded-lg mr-4 mb-2 hover:border-gray-200 transition-all"
-                    >
-                      <Icons.Microsoft width={16} height={16} className="mr-2" />
-                      <span>{isMobile ? 'Cost' : 'Resource Cost'}</span>
-                    </a>
+                    <URLBox
+                      href={activeElement.pricingReferenceUrl}
+                      text={isMobile ? 'Cost' : 'Resource Cost'}
+                      size="md"
+                      className="mr-4 mb-2"
+                      icon={<Icons.Microsoft width={20} height={20} />}
+                    />
                   )}
                 </div>
               </div>
@@ -223,40 +222,37 @@ ALWAYS return valid markdown.
                 </TabsList>
                 <TabsContent value="terraform">
                   {activeElement?.terraformUrl && (
-                    <a
-                      target="_blank"
-                      href={activeElement?.terraformUrl}
-                      className="inline-flex items-center text-sm border p-2 rounded-lg mr-6 my-4 hover:border-gray-300 transition-all"
-                    >
-                      <Icons.Terraform width={16} height={16} className="mr-2" />
-                      <span>Official Documentation</span>
-                    </a>
+                    <URLBox
+                      href={activeElement.terraformUrl}
+                      text="Official Documentation"
+                      className="mr-6 my-4"
+                      icon={<Icons.Terraform width={20} height={20} />}
+                      size="md"
+                    />
                   )}
                   <CodeSnippet codeString={activeElement.terraformCode} language="hcl" />
                 </TabsContent>
                 <TabsContent value="bicep">
                   {activeElement?.resource && activeElement?.entity && (
-                    <a
-                      target="_blank"
+                    <URLBox
                       href={`https://learn.microsoft.com/en-us/azure/templates/${activeElement?.resource}/${activeElement?.entity}?pivots=deployment-language-bicep`}
-                      className="inline-flex items-center text-sm border p-2 rounded-lg mr-6 my-4 hover:border-gray-300 transition-all"
-                    >
-                      <Icons.Microsoft width={16} height={16} className="mr-2" />
-                      <span>Official Documentation</span>
-                    </a>
+                      text="Official Documentation"
+                      className="mr-6 my-4"
+                      icon={<Icons.Microsoft width={20} height={20} />}
+                      size="md"
+                    />
                   )}
                   <CodeSnippet codeString={activeElement.bicepCode} language="bicep" />
                 </TabsContent>
                 <TabsContent value="arm">
                   {activeElement?.resource && activeElement?.entity && (
-                    <a
-                      target="_blank"
+                    <URLBox
                       href={`https://learn.microsoft.com/en-us/azure/templates/${activeElement?.resource}/${activeElement?.entity}?pivots=deployment-language-arm-template`}
-                      className="inline-flex items-center text-sm border p-2 rounded-lg mr-6 my-4 hover:border-gray-300 transition-all"
-                    >
-                      <Icons.Microsoft width={16} height={16} className="mr-2" />
-                      <span>Official Documentation</span>
-                    </a>
+                      text="Official Documentation"
+                      className="mr-6 my-4"
+                      icon={<Icons.Microsoft width={20} height={20} />}
+                      size="md"
+                    />
                   )}
                   <CodeSnippet codeString={activeElement.armCode} language="json" />
                 </TabsContent>
@@ -277,31 +273,28 @@ ALWAYS return valid markdown.
             <CardContent>
               <div className="flex flex-wrap">
                 {activeElement?.portalUrl && (
-                  <a
-                    target="_blank"
-                    href={activeElement?.portalUrl}
-                    className="flex items-center text-sm border p-2 rounded-lg mr-4 mb-2 hover:border-gray-200 transition-all"
-                  >
-                    <Icons.Azure width={16} height={16} className="mr-2" />
-                    <span>{isMobile ? 'Portal' : 'Azure Portal'}</span>
-                  </a>
+                  <URLBox
+                    href={activeElement.portalUrl}
+                    text={isMobile ? 'Portal' : 'Azure Portal'}
+                    size="md"
+                    className="mr-4 mb-2"
+                    icon={<Icons.Azure width={20} height={20} />}
+                  />
                 )}
-                <a
-                  target="_blank"
+                <URLBox
                   href="https://shell.azure.com"
-                  className="flex items-center text-sm border p-2 rounded-lg mr-4 mb-2 hover:border-gray-200 transition-all"
-                >
-                  <Icons.Azure width={16} height={16} className="mr-2" />
-                  <span>{isMobile ? 'Shell' : 'Cloud Shell'}</span>
-                </a>
-                <a
-                  target="_blank"
+                  text={isMobile ? 'Shell' : 'Cloud Shell'}
+                  size="md"
+                  className="mr-4 mb-2"
+                  icon={<Icons.Azure width={20} height={20} />}
+                />
+                <URLBox
                   href="https://azure.microsoft.com/en-us/pricing/calculator/"
-                  className="flex items-center text-sm border p-2 rounded-lg mr-4 mb-2 hover:border-gray-200 transition-all"
-                >
-                  <Icons.Microsoft width={16} height={16} className="mr-2" />
-                  <span>{isMobile ? 'Pricing' : 'Pricing Calculator'}</span>
-                </a>
+                  text={isMobile ? 'Pricing' : 'Pricing Calculator'}
+                  size="md"
+                  className="mr-4 mb-2"
+                  icon={<Icons.Microsoft width={20} height={20} />}
+                />
               </div>
             </CardContent>
           </Card>
