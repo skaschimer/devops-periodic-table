@@ -118,14 +118,14 @@ export const ChatBox: React.FC<ChatBoxProps> = ({ prompt }) => {
     ...props
   }) => {
     const [isCopied, setIsCopied] = useState(false);
-
+  
     const handleCopy = () => {
       navigator.clipboard.writeText(String(children)).then(() => {
         setIsCopied(true);
         setTimeout(() => setIsCopied(false), 2000); // Reset after 2 seconds
       });
     };
-
+  
     if (inline) {
       return (
         <code className="bg-neutral-50 dark:bg-neutral-900 px-1 rounded" {...props}>
@@ -133,27 +133,29 @@ export const ChatBox: React.FC<ChatBoxProps> = ({ prompt }) => {
         </code>
       );
     }
-
+  
     return (
       <div className="relative my-4 w-full">
-        <pre className="relative overflow-x-auto rounded-lg bg-neutral-50 dark:bg-neutral-900 p-4 font-mono text-sm w-full">
+        <pre className="overflow-x-auto rounded-lg bg-neutral-50 dark:bg-neutral-900 p-4 font-mono text-sm w-full max-w-full break-words">
           <code className={className} {...props}>
             {children}
           </code>
-          <button
-            onClick={handleCopy}
-            className="absolute top-2 right-2 p-2 rounded bg-white dark:bg-black hover:bg-neutral-200 dark:hover:bg-neutral-700"
-          >
-            {isCopied ? (
-              <Icons.Check className="w-4 h-4" />
-            ) : (
-              <Icons.Copy className="w-4 h-4" />
-            )}
-          </button>
         </pre>
+
+        <button
+          onClick={handleCopy}
+          className="absolute top-2 right-2 p-2 rounded bg-white dark:bg-black hover:bg-neutral-200 dark:hover:bg-neutral-700"
+        >
+          {isCopied ? (
+            <Icons.Check className="w-4 h-4" />
+          ) : (
+            <Icons.Copy className="w-4 h-4" />
+          )}
+        </button>
       </div>
     );
   };
+  
 
   return (
     <div className="flex flex-col my-4 space-y-4 w-full">
@@ -178,7 +180,7 @@ export const ChatBox: React.FC<ChatBoxProps> = ({ prompt }) => {
       {botResponse && (
         <Card>
           <CardContent>
-            <div className="prose dark:prose-invert mt-6 space-y-6 w-full max-w-none">
+            <div className="prose dark:prose-invert mt-6 space-y-6 w-full">
               <ReactMarkdown
                 remarkPlugins={[remarkGfm]}
                 components={{
