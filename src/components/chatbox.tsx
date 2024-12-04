@@ -5,8 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
+import { Icons } from '@/components/ui/icons';
 
 type ChatBoxProps = {
   prompt: string;
@@ -109,7 +108,6 @@ export const ChatBox: React.FC<ChatBoxProps> = ({ prompt }) => {
 
   const CodeBlock = ({ node, inline, className, children, ...props }) => {
     const [isCopied, setIsCopied] = useState(false);
-    const language = className ? className.replace('language-', '') : '';
 
     const handleCopy = () => {
       navigator.clipboard.writeText(children).then(() => {
@@ -119,21 +117,27 @@ export const ChatBox: React.FC<ChatBoxProps> = ({ prompt }) => {
     };
 
     return !inline ? (
-      <div className="relative">
-        <pre className="rounded-lg bg-muted p-4 font-mono text-sm">
-          <code className={className} {...props}>
-            {children}
-          </code>
-        </pre>
+      <div className="relative my-4 border-gray-500">
+        <div className="overflow-x-auto">
+          <pre className="rounded-lg bg-muted p-4 font-mono text-sm">
+            <code className={className} {...props}>
+              {children}
+            </code>
+          </pre>
+        </div>
         <button
           onClick={handleCopy}
-          className="absolute top-2 right-2 text-xs bg-primary text-primary-foreground px-2 py-1 rounded"
+          className="absolute top-2 right-2 p-2 rounded bg-white dark:bg-black hover:bg-gray-200 dark:hover:bg-gray-700"
         >
-          {isCopied ? 'Copied' : 'Copy'}
+          {isCopied ? (
+            <Icons.Check className="w-4 h-4" />
+          ) : (
+            <Icons.Copy className="w-4 h-4" />
+          )}
         </button>
       </div>
     ) : (
-      <code className="bg-gray-200 dark:bg-gray-800 px-1 rounded" {...props}>
+      <code className="bg-gray-200 dark:bg-gray-700 px-1 rounded" {...props}>
         {children}
       </code>
     );
@@ -150,8 +154,8 @@ export const ChatBox: React.FC<ChatBoxProps> = ({ prompt }) => {
           placeholder="Type your message..."
           disabled={isLoading}
         />
-        <Button onClick={handleChatSubmit} disabled={isLoading}>
-          <FontAwesomeIcon icon={faPaperPlane} />
+        <Button variant="secondary" onClick={handleChatSubmit} disabled={isLoading}>
+          <Icons.Send className="w-4 h-4" />
         </Button>
       </div>
       {isLoading && (
@@ -162,7 +166,7 @@ export const ChatBox: React.FC<ChatBoxProps> = ({ prompt }) => {
       {botResponse && (
         <Card>
           <CardContent>
-            <div className="prose dark:prose-dark">
+            <div className="prose dark:prose-invert mt-6">
               <ReactMarkdown
                 remarkPlugins={[remarkGfm]}
                 components={{

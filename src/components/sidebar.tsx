@@ -204,7 +204,7 @@ ALWAYS return valid markdown.
                   <div className="my-4">
                     <Label>Category</Label>
                     <div
-                      className={`flex flex-col justify-center items-start py-1 px-2 lg:mx-0 w-fit rounded my-2 ${categoryData.find(
+                      className={`flex text-white flex-col justify-center items-start py-1 px-2 lg:mx-0 w-fit rounded my-2 ${categoryData.find(
                         (item) => item.name === activeElement.category
                       )?.color
                         }`}
