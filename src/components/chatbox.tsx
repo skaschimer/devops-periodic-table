@@ -178,25 +178,30 @@ export const ChatBox: React.FC<ChatBoxProps> = ({ prompt }) => {
   );
 
   // Custom List Item Component
-  const CustomListItem: React.FC<LiProps> = ({
-    children,
-    checked,
-    index,
-    ordered,
-    ...props
-  }) => (
-    <li className="flex items-start space-x-2 overflow-x-auto" {...props}>
-      <div className="flex-1">{children}</div>
+  const CustomListItem: React.FC<LiProps> = ({ children, ...props }) => (
+    <li className="list-disc list-outside ml-5" {...props}>
+      <span>{children}</span>
     </li>
   );
 
+
   // Components Object
   const components: Components = {
-    a: CustomLink,
+    ul: ({ children, ...props }) => (
+      <ul className="list-disc list-inside ml-5" {...props}>
+        {children}
+      </ul>
+    ),
+    ol: ({ children, ...props }) => (
+      <ol className="list-decimal list-inside ml-5" {...props}>
+        {children}
+      </ol>
+    ),
     li: CustomListItem,
+    a: CustomLink,
     code: CodeBlock,
     // ... other components if necessary
-  };
+  };  
 
   return (
     <div className="flex flex-col my-4 space-y-4 w-full">
