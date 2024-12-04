@@ -14,14 +14,14 @@ resource "azurerm_application_gateway" "network" {
   location            = azurerm_resource_group.main.location
 
   sku {
-    name     = "Standard_Small"
-    tier     = "Standard"
+    name     = "agw-${local.naming_suffix}"
+    tier     = "Standard_v2"
     capacity = 2
   }
 
   gateway_ip_configuration {
-    name      = "my-gateway-ip-configuration"
-    subnet_id = azurerm_subnet.frontend.id
+    name      = "agw-${local.naming_suffix}"
+    subnet_id = azurerm_subnet.main.id
   }
 
   frontend_port {
@@ -56,11 +56,10 @@ resource "azurerm_application_gateway" "network" {
 
   request_routing_rule {
     name                       = local.request_routing_rule_name
+    priority                   = 9
     rule_type                  = "Basic"
     http_listener_name         = local.listener_name
     backend_address_pool_name  = local.backend_address_pool_name
     backend_http_settings_name = local.http_setting_name
   }
-
-  tags = var.tags
 }

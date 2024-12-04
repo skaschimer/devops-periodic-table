@@ -4,7 +4,7 @@ resource "azurerm_web_application_firewall_policy" "main" {
   location            = azurerm_resource_group.main.location
 
   custom_rules {
-    name      = "Rule1"
+    name      = "waf-${local.naming_suffix}"
     priority  = 1
     rule_type = "MatchRule"
 
@@ -22,7 +22,7 @@ resource "azurerm_web_application_firewall_policy" "main" {
   }
 
   custom_rules {
-    name      = "Rule2"
+    name      = "waf-${local.naming_suffix}"
     priority  = 2
     rule_type = "MatchRule"
 
@@ -89,6 +89,4 @@ resource "azurerm_web_application_firewall_policy" "main" {
       }
     }
   }
-
-  tags = var.tags
 }

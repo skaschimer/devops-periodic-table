@@ -5,6 +5,4 @@ resource "azurerm_virtual_desktop_workspace" "workspace" {
 
   friendly_name = "FriendlyName"
   description   = "A description of my workspace"
-
-  tags = var.tags
 }

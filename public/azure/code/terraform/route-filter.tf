@@ -4,11 +4,9 @@ resource "azurerm_route_filter" "main" {
   location            = var.location
 
   rule {
-    name        = "rule"
+    name        = "rf-${local.naming_suffix}"
     access      = "Allow"
     rule_type   = "Community"
     communities = ["12076:52004"]
   }
-
-  tags = var.tags
 }

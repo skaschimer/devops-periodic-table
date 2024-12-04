@@ -4,9 +4,7 @@ resource "azurerm_lb" "main" {
   resource_group_name = azurerm_resource_group.main.name
 
   frontend_ip_configuration {
-    name                 = "PublicIPAddress"
+    name                 = "lbi-${local.naming_suffix}"
     public_ip_address_id = azurerm_public_ip.main.id
   }
-
-  tags = var.tags
 }

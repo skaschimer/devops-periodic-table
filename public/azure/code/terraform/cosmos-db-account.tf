@@ -5,22 +5,22 @@ resource "azurerm_cosmosdb_account" "db" {
   offer_type          = "Standard"
   kind                = "MongoDB"
 
-  enable_automatic_failover = true
+  automatic_failover_enabled = true
 
   capabilities {
-    name = "EnableAggregationPipeline"
+    name = "cosmos-${local.naming_suffix}"
   }
 
   capabilities {
-    name = "mongoEnableDocLevelTTL"
+    name = "cosmos-${local.naming_suffix}"
   }
 
   capabilities {
-    name = "MongoDBv3.4"
+    name = "cosmos-${local.naming_suffix}"
   }
 
   capabilities {
-    name = "EnableMongo"
+    name = "cosmos-${local.naming_suffix}"
   }
 
   consistency_policy {
@@ -30,14 +30,12 @@ resource "azurerm_cosmosdb_account" "db" {
   }
 
   geo_location {
-    location          = "eastus"
+    location          = var.location
     failover_priority = 1
   }
 
   geo_location {
-    location          = "westus"
+    location          = var.location
     failover_priority = 0
   }
-
-  tags = var.tags
 }

@@ -4,7 +4,7 @@ resource "azurerm_signalr_service" "main" {
   resource_group_name = azurerm_resource_group.main.name
 
   sku {
-    name     = "Free_F1"
+    name     = "sigr-${local.naming_suffix}"
     capacity = 1
   }
 
@@ -24,6 +24,4 @@ resource "azurerm_signalr_service" "main" {
     hub_pattern      = ["hub1"]
     url_template     = "http://foo.com"
   }
-
-  tags = var.tags
 }

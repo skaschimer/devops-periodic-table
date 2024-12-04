@@ -4,10 +4,8 @@ resource "azurerm_network_interface" "main" {
   resource_group_name = azurerm_resource_group.main.name
 
   ip_configuration {
-    name                          = "internal"
+    name                          = "nic-${local.naming_suffix}"
     subnet_id                     = azurerm_subnet.main.id
     private_ip_address_allocation = "Dynamic"
   }
-
-  tags = var.tags
 }

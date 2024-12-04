@@ -5,9 +5,7 @@ resource "azurerm_cdn_endpoint" "main" {
   resource_group_name = azurerm_resource_group.main.name
 
   origin {
-    name      = "main"
+    name      = "cdne-${local.naming_suffix}"
     host_name = "www.contoso.com"
   }
-
-  tags = var.tags
 }

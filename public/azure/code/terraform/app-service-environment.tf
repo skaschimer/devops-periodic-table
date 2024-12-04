@@ -6,17 +6,17 @@ resource "azurerm_app_service_environment_v3" "main" {
   internal_load_balancing_mode = "Web, Publishing"
 
   cluster_setting {
-    name  = "DisableTls1.0"
+    name  = "ase-${local.naming_suffix}"
     value = "1"
   }
 
   cluster_setting {
-    name  = "InternalEncryption"
+    name  = "ase-${local.naming_suffix}"
     value = "true"
   }
 
   cluster_setting {
-    name  = "FrontEndSSLCipherSuiteOrder"
+    name  = "ase-${local.naming_suffix}"
     value = "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256"
   }
 

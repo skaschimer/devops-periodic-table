@@ -8,6 +8,4 @@ resource "azurerm_windows_function_app" "main" {
   service_plan_id            = azurerm_service_plan.main.id
 
   site_config {}
-
-  tags = var.tags
 }

@@ -2,14 +2,13 @@ import re
 import os
 import requests
 import codecs
-from bs4 import BeautifulSoup
 import subprocess
 
 # Constants
 NAMESPACE = "hashicorp"
-PROVIDER = "azurerm"
+
 HEADERS = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+    'User-Agent': 'Mozilla/5.0'
 }
 
 def decode_escapes(s):
@@ -21,22 +20,14 @@ def decode_escapes(s):
 def substitute_values(content, slug, substitutions):
     """
     Substitute attributes with specified values.
-    
-    :param content: The original Terraform content.
-    :param slug: Slug for the resource.
-    :param substitutions: Dictionary with attribute as key and replacement value as value.
-    :return: Modified content.
     """
     for attribute, value in substitutions.items():
         if attribute == "tags":
-            # Pattern to match the entire tags block, capturing leading whitespace
-            pattern = re.compile(rf'^(\s\s){attribute}\s*=\s*{{.*?}}', re.DOTALL | re.MULTILINE)
+            pattern = re.compile(rf'^(\s*){attribute}\s*=\s*{{.*?}}', re.DOTALL | re.MULTILINE)
             replacement = rf'\1{attribute} = {value}'
         else:
-            # Matching the attribute at the beginning of a line (with leading whitespace), to avoid false matches inside other attributes or strings
-            pattern = re.compile(rf'^(\s\s){attribute}\s*=\s*".*?"', re.MULTILINE)
+            pattern = re.compile(rf'^(\s*){attribute}\s*=\s*".*?"', re.MULTILINE)
             replacement = rf'\1{attribute} = {value}'
-        
         content = pattern.sub(replacement, content)
     return content
 
@@ -45,29 +36,22 @@ def extract_resources_and_data(content, resource_type):
     Extract the block for a specific resource type from the Terraform content and
     retain blocks containing "data" or "locals" references.
     """
-    
-    # Patterns to capture blocks
     locals_pattern = rf'^locals\s*{{[\s\S]*?^}}'
-    data_pattern = rf'^data\s+\".*?\"\s+\".*?\"(\s+{{[^{{}}]*}})'
+    data_pattern = rf'^data\s+\".*?\"\s+\".*?\"\s*{{[\s\S]*?^}}'
     resource_pattern = rf'^resource\s+"{resource_type}"\s+".*?"\s*{{[\s\S]*?^}}'
-    
-    # Capture the desired resource
+
     resource_blocks = [match.group(0) for match in re.finditer(resource_pattern, content, re.MULTILINE)]
-    
-    # If the resource contains references to data or locals, capture those blocks
-    data_blocks = set()  # Using set to avoid duplicate blocks
+    data_blocks = set()
     locals_blocks = set()
-    
+
     for resource_block in resource_blocks:
         if 'data.' in resource_block:
             data_blocks.update([match.group(0) for match in re.finditer(data_pattern, content, re.MULTILINE)])
         if 'local.' in resource_block:
             locals_blocks.update([match.group(0) for match in re.finditer(locals_pattern, content, re.MULTILINE)])
-    
-    # Combine the blocks in the desired order: data, locals, resource
+
     combined_blocks = list(data_blocks) + list(locals_blocks) + resource_blocks
-    
-    return '\n\n'.join(combined_blocks)  # Separate blocks with two newlines for better readability
+    return '\n\n'.join(combined_blocks)
 
 def extract_resource_from_terraform_url(url):
     """
@@ -78,85 +62,66 @@ def extract_resource_from_terraform_url(url):
         return match.group(1)
     return None
 
-def get_github_url(resource):
+def get_github_raw_url(provider, resource):
     """
-    Formulates the GitHub documentation URL using the extracted service name.
+    Formulates the raw GitHub URL for the Markdown documentation.
     """
-    return f"https://github.com/{NAMESPACE}/terraform-provider-{PROVIDER}/blob/main/website/docs/r/{resource}.html.markdown"
+    return f"https://raw.githubusercontent.com/{NAMESPACE}/terraform-provider-{provider}/main/website/docs/r/{resource}.html.markdown"
 
-def scrape_terraform_documentation(url):
+def fetch_markdown_content(url):
     """
-    Fetches the documentation from GitHub, focusing on content inside <article> tags.
+    Fetches the raw Markdown content from the GitHub raw URL.
     """
     try:
-        print(f"Scraping {url}...")
+        print(f"Fetching {url}...")
         response = requests.get(url, headers=HEADERS, timeout=10)
         if response.status_code == 200:
-            soup = BeautifulSoup(response.content, 'html.parser')
-            article_content = soup.find('article')
-            return article_content
+            return response.text
+        else:
+            print(f"Failed to fetch {url}: HTTP {response.status_code}")
     except requests.RequestException as e:
-        print(f"Error scraping URL {url}: {e}")
+        print(f"Error fetching URL {url}: {e}")
     return None
 
-def get_documentation_code(article_content):
+def extract_terraform_code_blocks(markdown_content):
     """
-    Extracts Terraform code from <pre> tags within the given article content.
+    Extracts Terraform code blocks from the Markdown content.
     """
-    code_content = article_content.find('pre')
-    return code_content.text if code_content else None
+    code_blocks = re.findall(r'```hcl(.*?)```', markdown_content, re.DOTALL)
+    return code_blocks
 
-def supports_tags(article_content):
+def supports_tags(markdown_content):
     """
-    Checks if the article content mentions that "tags" are supported.
+    Checks if 'tags' are mentioned in the attributes section of the Markdown content.
     """
-    return "tags -" in article_content.text
+    return "tags -" in markdown_content
 
-def append_tags_if_supported(article_content, terraform_code):
+def append_tags_if_supported(markdown_content, terraform_code):
     """
-    Appends 'tags = var.tags' just before the closing brace of the Terraform resource block
-    if tags are supported but not present in the example code.
+    Appends 'tags = var.tags' to the Terraform code if tags are supported but not present.
     """
-    if "tags -" in article_content.text and 'tags =' not in terraform_code:
-        # Use a regex to find the last closing brace and append 'tags = var.tags' before it
-        modified_code = re.sub(r'}\s*$', '\n  tags = var.tags\n}', terraform_code, flags=re.MULTILINE)
-        return modified_code
+    if supports_tags(markdown_content) and 'tags =' not in terraform_code:
+        terraform_code = re.sub(r'}\s*$', '\n  tags = var.tags\n}', terraform_code, flags=re.MULTILINE)
     return terraform_code
 
 def format_terraform_code(code: str, indentation='  '):
     """
     Indent Terraform code so that it is formatted correctly.
-
-    Args:
-        code (str): The Terraform code to format.
-        indentation (str): The string used for each level of indentation. Defaults to two spaces.
     """
-
-    # Split the code into lines
     lines = code.split('\n')
-
-    # Initialize a counter for the current level of indentation
     indent_level = 0
+    formatted_lines = []
 
-    # Process each line
-    for i, line in enumerate(lines):
-        # Increase the indent level if the line opens a block
-        if '{' in line and '}' not in line:
-            lines[i] = indent_level * indentation + line.lstrip()
-            indent_level += 1
-        # Decrease the indent level if the line closes a block
-        elif '}' in line and '{' not in line:
+    for line in lines:
+        stripped_line = line.strip()
+        if stripped_line.startswith('}'):
             indent_level -= 1
-            lines[i] = indent_level * indentation + line.lstrip()
-        # No change in indent level if the line both opens and closes a block
-        elif '{' in line and '}' in line:
-            lines[i] = indent_level * indentation + line.lstrip()
-        # Otherwise, just add the current level of indentation
-        else:
-            lines[i] = indent_level * indentation + line.lstrip()
+        formatted_line = (indentation * indent_level) + stripped_line
+        formatted_lines.append(formatted_line)
+        if stripped_line.endswith('{'):
+            indent_level += 1
 
-    # Join the lines back together and return the result
-    return '\n'.join(lines)
+    return '\n'.join(formatted_lines)
 
 cloud_platforms = [
     {
@@ -174,65 +139,59 @@ cloud_platforms = [
 ]
 
 for cloud in cloud_platforms:
-    # Step 1: Parse the TSX file and extract all terraformUrl values.
     cloud_name = cloud['name']
     cloud_provider = cloud['provider']
 
-    with open(f'../src/app/{cloud_name}.ts', 'r') as f:
+    with open(f'../src/app/data/{cloud_name}.ts', 'r') as f:
         tsx_content = f.read()
 
-    # Use regex to extract terraformUrl and id values
-    pattern = re.compile(r'id: \'(.*?)\',.*?\s*slug: \'(.*?)\',.*?terraformUrl: \'(.*?)\'', re.DOTALL)
+    pattern = re.compile(r'id:\s*\'(.*?)\',.*?slug:\s*\'(.*?)\',.*?terraformUrl:\s*\'(.*?)\'', re.DOTALL)
     matches = pattern.findall(tsx_content)
-
-    # Step 2: For each terraformUrl, get the GitHub URL and fetch the content.
 
     output_directory = f"../public/{cloud_name}/code/terraform"
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
 
-
     for id, slug, url in matches:
-        # print(f"Processing: ID: {id}, Slug: {slug}, URL: {url}")  # Debug line
-        # Define substitutions outside the loop
-        substitutions = {
-            "name": f'"{slug}${{local.naming_suffix}}"',
-            "location": "var.location",
-            "tags": "var.tags",
-        }
-
         resource = extract_resource_from_terraform_url(url)
         if resource:
-            github_url = get_github_url(resource)
-            article_content = scrape_terraform_documentation(github_url)
+            github_raw_url = get_github_raw_url(cloud_provider, resource)
+            markdown_content = fetch_markdown_content(github_raw_url)
 
-            if article_content:
-                # Get the example code
-                content = get_documentation_code(article_content)
+            if markdown_content:
+                code_blocks = extract_terraform_code_blocks(markdown_content)
 
-                if content:
-                    # Check if tags are supported and append them if needed
-                    content = append_tags_if_supported(article_content, content)
+                if code_blocks:
+                    content = code_blocks[0]
+
+                    # Append tags if supported
+                    content = append_tags_if_supported(markdown_content, content)
 
                     # Decode escape sequences
                     content = decode_escapes(content)
-                    
+
+                    substitutions = {
+                        "name": f'"{slug}${{local.naming_suffix}}"',
+                        "location": "var.location",
+                        "tags": "var.tags",
+                    }
+
                     # Substitute name and location values
                     content = substitute_values(content, slug, substitutions)
-                    
+
                     # Extract specific resource block
                     content = extract_resources_and_data(content, f"{cloud_provider}_{resource}")
 
                     if not content:
-                        print("Specific resource block not found!")  # Debug line
-                        continue  # If the specific resource block is not found, skip saving the file
+                        print(f"Specific resource block not found for {id}!")
+                        continue
 
                     # Replace all instances of "example" and .example
                     content = content.replace('"example"', '"main"').replace('.example', '.main')
 
                     # Format the Terraform code
                     content = format_terraform_code(content)
-                    
+
                     if not content:
                         print(f"No content for {id}, skipping...")
                         continue
@@ -248,16 +207,20 @@ for cloud in cloud_platforms:
                             print(f"No changes for {id}, skipping...")
                             continue
 
-                    print(f"Saving to {full_path}")  # Debug line
+                    print(f"Saving to {full_path}")
                     with open(full_path, 'w') as f:
                         f.write(content)
+                else:
+                    print(f"No code blocks found in {github_raw_url}")
+            else:
+                print(f"Failed to fetch or parse content for {id}")
 
-    print("Files saved successfully!")
+    print("Files saved successfully for cloud: {cloud_name}!")
 
     # Run terraform fmt on all written files
     try:
         print("Running terraform fmt...")
-        subprocess.run(["terraform", "fmt"], cwd=output_directory, check=True)
+        subprocess.run(["terraform", "fmt", "."], cwd=output_directory, check=True)
         print("Terraform fmt completed successfully!")
     except subprocess.CalledProcessError:
         print("Error running terraform fmt!")

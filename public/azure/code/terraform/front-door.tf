@@ -3,7 +3,7 @@ resource "azurerm_frontdoor" "main" {
   resource_group_name = azurerm_resource_group.main.name
 
   routing_rule {
-    name               = "exampleRoutingRule1"
+    name               = "fd-${local.naming_suffix}"
     accepted_protocols = ["Http", "Https"]
     patterns_to_match  = ["/*"]
     frontend_endpoints = ["exampleFrontendEndpoint1"]
@@ -14,15 +14,15 @@ resource "azurerm_frontdoor" "main" {
   }
 
   backend_pool_load_balancing {
-    name = "exampleLoadBalancingSettings1"
+    name = "fd-${local.naming_suffix}"
   }
 
   backend_pool_health_probe {
-    name = "exampleHealthProbeSetting1"
+    name = "fd-${local.naming_suffix}"
   }
 
   backend_pool {
-    name = "exampleBackendBing"
+    name = "fd-${local.naming_suffix}"
     backend {
       host_header = "www.bing.com"
       address     = "www.bing.com"
@@ -35,9 +35,7 @@ resource "azurerm_frontdoor" "main" {
   }
 
   frontend_endpoint {
-    name      = "exampleFrontendEndpoint1"
+    name      = "fd-${local.naming_suffix}"
     host_name = "example-FrontDoor.azurefd.net"
   }
-
-  tags = var.tags
 }

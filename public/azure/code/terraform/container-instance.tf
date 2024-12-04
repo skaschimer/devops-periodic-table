@@ -7,7 +7,7 @@ resource "azurerm_container_group" "main" {
   os_type             = "Linux"
 
   container {
-    name   = "hello-world"
+    name   = "ci${local.naming_suffix}"
     image  = "mcr.microsoft.com/azuredocs/aci-helloworld:latest"
     cpu    = "0.5"
     memory = "1.5"
@@ -19,7 +19,7 @@ resource "azurerm_container_group" "main" {
   }
 
   container {
-    name   = "sidecar"
+    name   = "ci${local.naming_suffix}"
     image  = "mcr.microsoft.com/azuredocs/aci-tutorial-sidecar"
     cpu    = "0.5"
     memory = "1.5"

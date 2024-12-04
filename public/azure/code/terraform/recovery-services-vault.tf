@@ -5,6 +5,4 @@ resource "azurerm_recovery_services_vault" "vault" {
   sku                 = "Standard"
 
   soft_delete_enabled = true
-
-  tags = var.tags
 }

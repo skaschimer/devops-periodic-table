@@ -4,6 +4,4 @@ resource "azurerm_notification_hub_namespace" "main" {
   location            = azurerm_resource_group.main.location
   namespace_type      = "NotificationHub"
   sku_name            = "Free"
-
-  tags = var.tags
 }

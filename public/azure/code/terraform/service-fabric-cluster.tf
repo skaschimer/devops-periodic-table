@@ -9,7 +9,7 @@ resource "azurerm_service_fabric_cluster" "main" {
   management_endpoint  = "https://example:80"
 
   node_type {
-    name                 = "first"
+    name                 = "sf-${local.naming_suffix}"
     instance_count       = 3
     is_primary           = true
     client_endpoint_port = 2020
