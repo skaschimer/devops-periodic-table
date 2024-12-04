@@ -5,12 +5,13 @@ import { Card, CardContent } from '@/components/ui/card';
 import ReactMarkdown, { Components } from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Icons } from '@/components/ui/icons';
+import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import { ReactMarkdownProps } from 'react-markdown/lib/complex-types';
 import {
   CodeComponent,
   LiProps,
-  OlProps,
-  UlProps,
+  // OlProps,
+  // UlProps,
 } from 'react-markdown/lib/ast-to-react';
 import {
   AnchorHTMLAttributes,
@@ -27,6 +28,7 @@ export const ChatBox: React.FC<ChatBoxProps> = ({ prompt }) => {
   const [botResponse, setBotResponse] = useState<string>('');
   const [requestCount, setRequestCount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const [isStreaming, setIsStreaming] = useState(false);
 
   const MAX_REQUESTS = 5;
 
@@ -42,11 +44,12 @@ export const ChatBox: React.FC<ChatBoxProps> = ({ prompt }) => {
       alert('You have reached the maximum number of requests.');
       return;
     }
-
+  
     setRequestCount(requestCount + 1);
     setIsLoading(true);
+    setIsStreaming(false); // Reset streaming state
     setBotResponse(''); // Clear previous response
-
+  
     try {
       const response = await fetch('/api/generate', {
         method: 'POST',
@@ -70,29 +73,28 @@ export const ChatBox: React.FC<ChatBoxProps> = ({ prompt }) => {
           stream: true,
         }),
       });
-
-      console.log('Response:', response);
-
+  
       if (!response.ok || !response.body) {
         throw new Error(response.statusText);
       }
-
+  
       const reader = response.body.getReader();
       const decoder = new TextDecoder('utf-8');
       let botMessageContent = '';
-
+  
       let doneReading = false;
+      setIsStreaming(true); // Stream starts here
       while (!doneReading) {
         const { value, done } = await reader.read();
         if (done) break;
-
+  
         const chunkValue = decoder.decode(value);
-
+  
         const lines = chunkValue
           .split(/\r?\n/)
           .map((line) => line.trim())
           .filter((line) => line !== '');
-
+  
         for (const line of lines) {
           if (line === 'data: [DONE]') {
             doneReading = true;
@@ -117,7 +119,8 @@ export const ChatBox: React.FC<ChatBoxProps> = ({ prompt }) => {
       console.error('Error interacting with OpenAI API:', error);
     } finally {
       setIsLoading(false);
-      setUserInput(''); // Clear the input field
+      setIsStreaming(false);
+      setUserInput('');
     }
   };
 
@@ -186,20 +189,20 @@ export const ChatBox: React.FC<ChatBoxProps> = ({ prompt }) => {
     </a>
   );
 
-  // Custom List Component
-  const CustomList: React.FC<OlProps | UlProps> = ({
-    children,
-    ordered,
-    depth,
-    ...props
-  }) => {
-    const Tag = ordered ? 'ol' : 'ul';
-    return (
-      <Tag className="list-disc pl-5 space-y-2" {...props}>
-        {children}
-      </Tag>
-    );
-  };
+  // // Custom List Component
+  // const CustomList: React.FC<OlProps | UlProps> = ({
+  //   children,
+  //   ordered,
+  //   depth,
+  //   ...props
+  // }) => {
+  //   const Tag = ordered ? 'ol' : 'ul';
+  //   return (
+  //     <Tag className="list-disc pl-5 space-y-2" {...props}>
+  //       {children}
+  //     </Tag>
+  //   );
+  // };
 
   // Custom List Item Component
   const CustomListItem: React.FC<LiProps> = ({
@@ -218,8 +221,8 @@ export const ChatBox: React.FC<ChatBoxProps> = ({ prompt }) => {
   // Components Object
   const components: Components = {
     a: CustomLink,
-    ul: CustomList,
-    ol: CustomList,
+    // ul: CustomList,
+    // ol: CustomList,
     li: CustomListItem,
     code: CodeBlock,
     // ... other components if necessary
@@ -244,9 +247,9 @@ export const ChatBox: React.FC<ChatBoxProps> = ({ prompt }) => {
           <Icons.Send className="w-4 h-4" />
         </Button>
       </div>
-      {isLoading && (
+      {isLoading && !isStreaming && (
         <div className="flex justify-center items-center">
-          <p>Loading...</p>
+          <LoadingSpinner size={32} className="text-primary" />
         </div>
       )}
       {botResponse && (
