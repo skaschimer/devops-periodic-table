@@ -13,9 +13,14 @@ HEADERS = {
 
 def decode_escapes(s):
     """
-    Decodes escape sequences like \n and \"
+    Decodes escape sequences like \n and \", handling errors gracefully.
     """
-    return codecs.decode(s, 'unicode_escape')
+    try:
+        return codecs.decode(s, 'unicode_escape')
+    except Exception as e:
+        print(f"Error decoding escape sequences: {e}")
+        return s  # Return the original string if decoding fails
+
 
 def substitute_values(content, slug, substitutions):
     """
