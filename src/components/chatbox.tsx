@@ -209,7 +209,7 @@ export const ChatBox: React.FC<ChatBoxProps> = ({ prompt }) => {
     ordered,
     ...props
   }) => (
-    <li className="flex items-start space-x-2" {...props}>
+    <li className="flex items-start space-x-2 overflow-x-auto" {...props}>
       <span className="mt-1 text-primary">•</span>
       <div className="flex-1">{children}</div>
     </li>
