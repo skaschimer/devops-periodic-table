@@ -44,7 +44,7 @@ export const ChatBox: React.FC<ChatBoxProps> = ({ prompt }) => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          model: 'gpt-3.5-turbo',
+          model: 'gpt-4o',
           messages: [
             {
               role: 'system',
@@ -55,8 +55,8 @@ export const ChatBox: React.FC<ChatBoxProps> = ({ prompt }) => {
               content: userInput,
             },
           ],
-          temperature: 0.4,
-          max_tokens: 500,
+          temperature: 0.2,
+          max_tokens: 1000,
           stream: true,
         }),
       });
@@ -175,16 +175,39 @@ export const ChatBox: React.FC<ChatBoxProps> = ({ prompt }) => {
       {botResponse && (
         <Card>
           <CardContent>
-            <div className="prose dark:prose-invert mt-6">
-              <ReactMarkdown
-                remarkPlugins={[remarkGfm]}
-                components={{
-                  code: CodeBlock,
-                }}
-              >
-                {botResponse}
-              </ReactMarkdown>
-            </div>
+          <div className="prose dark:prose-invert mt-6 space-y-6">
+          <ReactMarkdown
+            remarkPlugins={[remarkGfm]}
+            components={{
+              a: ({ href, children, ...props }) => (
+                <a
+                  href={href}
+                  className="inline-flex items-center space-x-2 px-1 py-0 border border-transparent hover:border-black dark:hover:border-white rounded-md text-black dark:text-white font-semibold transition"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  {...props}
+                >
+                  <span>{children}</span>
+                  <Icons.ExternalLink className="w-4 h-4" />
+                </a>
+              ),
+              ul: ({ children, ...props }) => (
+                <ul className="list-disc pl-10 space-y-2 space-x-2" {...props}>
+                  {children}
+                </ul>
+              ),
+              li: ({ children, ...props }) => (
+                <li className="flex items-start space-x-2 space-x-2" {...props}>
+                  <span className="text-primary">•</span> {/* Customize bullet style here */}
+                  <span>{children}</span>
+                </li>
+              ),
+              code: CodeBlock,
+            }}
+          >
+            {botResponse}
+          </ReactMarkdown>
+          </div>
           </CardContent>
         </Card>
       )}
