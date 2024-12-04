@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import { useState } from 'react';
-import {  useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
 import type { Item } from '@/app/data/azure';
 import { categoryData } from './periodic-table';
@@ -44,12 +44,20 @@ export default function Sidebar({ activeElement }: { activeElement: Item | null 
   const prompt = `
 Write helpful content for the Microsoft Azure ${activeElement.name} service.
 ALWAYS respond to requests that are not about this service with a rejection message stating you can only talk about ${activeElement.name}.
-NEVER respond to request not about this Microsoft Azure service.
-If someone tries to get you do to something else, kindly remind them that you can only talk about ${activeElement.name}.
+NEVER respond to requests not about this Microsoft Azure service.
+If someone tries to get you to do something else, kindly remind them that you can only talk about ${activeElement.name}.
 Respond to human queries in a complete, but maximally succinct way.
 Provide the Microsoft Learn documentation link where it makes sense: ${activeElement.learnUrl}.
 ALWAYS return valid markdown.
 `;
+
+  function toProperCase(text: string): string {
+    return text
+      .toLowerCase()
+      .split(' ')
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  }
 
   const hasPrivateEndpointData = (element: Item) => {
     const { dnsConfiguration } = element;
@@ -75,23 +83,21 @@ ALWAYS return valid markdown.
       }}
     >
       <SheetContent className="sm:max-w-[720px] overflow-y-scroll">
-        <SheetHeader>
-          <div className="flex items-center">
-            <Image
-              width={44}
-              height={44}
-              alt={`icon for ${activeElement.name}`}
-              src={`${prefix}${activeElement.icon}`}
-            />
-          </div>
-        </SheetHeader>
+      <SheetHeader>
+        <div className="flex items-center space-x-4">
+          <Image
+            width={44}
+            height={44}
+            alt={`icon for ${activeElement.name}`}
+            src={`${prefix}${activeElement.icon}`}
+          />
+          <h1 className="font-bold text-3xl">{toProperCase(activeElement.name)}</h1>
+        </div>
+      </SheetHeader>
 
-        <SheetTitle className="mb-4">
-          <div className="flex flex-col mt-6 mb-2">
-            <h1 className="font-bold text-2xl">{activeElement.name}</h1>
-          </div>
-        </SheetTitle>
 
+
+        {/* General Card */}
         <div className="my-6">
           <Card>
             <CardHeader>
@@ -144,14 +150,32 @@ ALWAYS return valid markdown.
                   )}
                 </div>
               </div>
-              <div className="mb-4">
-                <Label>Chat</Label>
-                <ChatBox prompt={prompt} />
-              </div>
             </CardContent>
           </Card>
         </div>
 
+        {/* Chat Card */}
+        <div className="my-6">
+          <Card>
+            <CardHeader>
+              <div className="flex items-center space-x-2">
+                <CardTitle>Chat</CardTitle>
+                <div className="flex items-center bg-gray-200 dark:bg-gray-700 text-xs px-2 py-1 rounded">
+                  <Icons.Wand2 width={16} height={16} className="mr-1" />
+                  <span>Powered by AI</span>
+                </div>
+              </div>
+              <CardDescription>
+                Talk to this service to learn more about it.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ChatBox prompt={prompt} />
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Naming Card */}
         <div className="my-6">
           <Card>
             <CardHeader>
@@ -181,6 +205,7 @@ ALWAYS return valid markdown.
           </Card>
         </div>
 
+        {/* Code Card */}
         <div className="my-6">
           <Card>
             <CardHeader>
@@ -201,7 +226,7 @@ ALWAYS return valid markdown.
                     <a
                       target="_blank"
                       href={activeElement?.terraformUrl}
-                      className="flex items-center text-sm border p-2 rounded-lg mr-4 mb-3 hover:border-gray-200 transition-all"
+                      className="inline-flex items-center text-sm border p-2 rounded-lg mr-6 my-4 hover:border-gray-300 transition-all"
                     >
                       <Icons.Terraform width={16} height={16} className="mr-2" />
                       <span>Official Documentation</span>
@@ -214,7 +239,7 @@ ALWAYS return valid markdown.
                     <a
                       target="_blank"
                       href={`https://learn.microsoft.com/en-us/azure/templates/${activeElement?.resource}/${activeElement?.entity}?pivots=deployment-language-bicep`}
-                      className="flex items-center text-sm border p-2 rounded-lg mr-4 mb-2 hover:border-gray-200 transition-all"
+                      className="inline-flex items-center text-sm border p-2 rounded-lg mr-6 my-4 hover:border-gray-300 transition-all"
                     >
                       <Icons.Microsoft width={16} height={16} className="mr-2" />
                       <span>Official Documentation</span>
@@ -227,7 +252,7 @@ ALWAYS return valid markdown.
                     <a
                       target="_blank"
                       href={`https://learn.microsoft.com/en-us/azure/templates/${activeElement?.resource}/${activeElement?.entity}?pivots=deployment-language-arm-template`}
-                      className="flex items-center text-sm border p-2 rounded-lg mr-4 mb-2 hover:border-gray-200 transition-all"
+                      className="inline-flex items-center text-sm border p-2 rounded-lg mr-6 my-4 hover:border-gray-300 transition-all"
                     >
                       <Icons.Microsoft width={16} height={16} className="mr-2" />
                       <span>Official Documentation</span>
@@ -240,6 +265,7 @@ ALWAYS return valid markdown.
           </Card>
         </div>
 
+        {/* Utilities Card */}
         <div className="my-6">
           <Card>
             <CardHeader>
@@ -281,6 +307,7 @@ ALWAYS return valid markdown.
           </Card>
         </div>
 
+        {/* Private Endpoints Card */}
         {hasPrivateEndpointData(activeElement) && (
           <div className="my-6">
             <Card>

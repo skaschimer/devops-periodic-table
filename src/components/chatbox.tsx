@@ -10,14 +10,11 @@ import { ReactMarkdownProps } from 'react-markdown/lib/complex-types';
 import {
   CodeComponent,
   LiProps,
-  // OlProps,
-  // UlProps,
 } from 'react-markdown/lib/ast-to-react';
 import {
   AnchorHTMLAttributes,
-  DetailedHTMLProps,
-  HTMLAttributes,
 } from 'react';
+import { URLBox } from './ui/url-box';
 
 type ChatBoxProps = {
   prompt: string;
@@ -177,32 +174,8 @@ export const ChatBox: React.FC<ChatBoxProps> = ({ prompt }) => {
   const CustomLink: React.FC<
     AnchorHTMLAttributes<HTMLAnchorElement> & ReactMarkdownProps
   > = ({ href, children, ...props }) => (
-    <a
-      href={href}
-      className="inline-flex items-center space-x-2 px-2 py-0 border border-transparent hover:border-black dark:hover:border-white rounded-md text-black dark:text-white hover:bg-neutral-50 dark:hover:bg-neutral-900 transition"
-      target="_blank"
-      rel="noopener noreferrer"
-      {...props}
-    >
-      <span>{children}</span>
-      <Icons.ExternalLink className="w-4 h-4" />
-    </a>
+    <URLBox href={href || '#'} text={String(children)} />
   );
-
-  // // Custom List Component
-  // const CustomList: React.FC<OlProps | UlProps> = ({
-  //   children,
-  //   ordered,
-  //   depth,
-  //   ...props
-  // }) => {
-  //   const Tag = ordered ? 'ol' : 'ul';
-  //   return (
-  //     <Tag className="list-disc pl-5 space-y-2" {...props}>
-  //       {children}
-  //     </Tag>
-  //   );
-  // };
 
   // Custom List Item Component
   const CustomListItem: React.FC<LiProps> = ({
@@ -213,7 +186,6 @@ export const ChatBox: React.FC<ChatBoxProps> = ({ prompt }) => {
     ...props
   }) => (
     <li className="flex items-start space-x-2 overflow-x-auto" {...props}>
-      <span className="mt-1 text-primary">•</span>
       <div className="flex-1">{children}</div>
     </li>
   );
@@ -221,8 +193,6 @@ export const ChatBox: React.FC<ChatBoxProps> = ({ prompt }) => {
   // Components Object
   const components: Components = {
     a: CustomLink,
-    // ul: CustomList,
-    // ol: CustomList,
     li: CustomListItem,
     code: CodeBlock,
     // ... other components if necessary

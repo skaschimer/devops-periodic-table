@@ -8,6 +8,7 @@ import {
   Check,
   Copy,
   Send,
+  Wand2,
   type Icon as LucideIcon,
   Layers,
   ExternalLink,
@@ -25,6 +26,7 @@ export const Icons = {
   Copy,
   Send,
   ExternalLink,
+  Wand2,
   Logo: Layers,
   GitHub: (props: LucideProps) => (
     <svg viewBox="0 0 438.549 438.549" {...props}>
