@@ -4,4 +4,9 @@ resource "azurerm_postgresql_database" "main" {
   server_name         = azurerm_postgresql_server.main.name
   charset             = "UTF8"
   collation           = "English_United States.1252"
+
+  # prevent the possibility of accidental data loss
+  lifecycle {
+    prevent_destroy = true
+  }
 }

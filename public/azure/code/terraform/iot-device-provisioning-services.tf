@@ -5,9 +5,7 @@ resource "azurerm_iothub_dps" "main" {
   allocation_policy   = "Hashed"
 
   sku {
-    name     = "S1"
+    name     = "provs-${local.naming_suffix}"
     capacity = "1"
   }
-
-  tags = var.tags
 }

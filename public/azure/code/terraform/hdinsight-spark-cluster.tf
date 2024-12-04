@@ -40,6 +40,4 @@ resource "azurerm_hdinsight_spark_cluster" "main" {
       password = "AccTestvdSC4daf986!"
     }
   }
-
-  tags = var.tags
 }

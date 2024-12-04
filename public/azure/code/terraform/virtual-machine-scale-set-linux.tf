@@ -17,8 +17,8 @@ resource "azurerm_linux_virtual_machine_scale_set" "main" {
 
   source_image_reference {
     publisher = "Canonical"
-    offer     = "0001-com-ubuntu-server-focal"
-    sku       = "20_04-lts"
+    offer     = "0001-com-ubuntu-server-jammy"
+    sku       = "22_04-lts"
     version   = "latest"
   }
 
@@ -28,15 +28,13 @@ resource "azurerm_linux_virtual_machine_scale_set" "main" {
   }
 
   network_interface {
-    name    = "main"
+    name    = "vmss-${local.naming_suffix}"
     primary = true
 
     ip_configuration {
-      name      = "internal"
+      name      = "vmss-${local.naming_suffix}"
       primary   = true
       subnet_id = azurerm_subnet.internal.id
     }
   }
-
-  tags = var.tags
 }

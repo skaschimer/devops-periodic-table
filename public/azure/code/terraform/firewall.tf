@@ -6,10 +6,8 @@ resource "azurerm_firewall" "main" {
   sku_tier            = "Standard"
 
   ip_configuration {
-    name                 = "configuration"
+    name                 = "afw-${local.naming_suffix}"
     subnet_id            = azurerm_subnet.main.id
     public_ip_address_id = azurerm_public_ip.main.id
   }
-
-  tags = var.tags
 }

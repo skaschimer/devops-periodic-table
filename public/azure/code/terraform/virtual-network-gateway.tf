@@ -11,7 +11,7 @@ resource "azurerm_virtual_network_gateway" "main" {
   sku           = "Basic"
 
   ip_configuration {
-    name                          = "vnetGatewayConfig"
+    name                          = "vgw-${local.naming_suffix}"
     public_ip_address_id          = azurerm_public_ip.main.id
     private_ip_address_allocation = "Dynamic"
     subnet_id                     = azurerm_subnet.main.id
@@ -21,7 +21,7 @@ resource "azurerm_virtual_network_gateway" "main" {
     address_space = ["10.2.0.0/24"]
 
     root_certificate {
-      name = "DigiCert-Federated-ID-Root-CA"
+      name = "vgw-${local.naming_suffix}"
 
       public_cert_data = <<EOF
       MIIDuzCCAqOgAwIBAgIQCHTZWCM+IlfFIRXIvyKSrjANBgkqhkiG9w0BAQsFADBn
@@ -49,10 +49,8 @@ resource "azurerm_virtual_network_gateway" "main" {
     }
 
     revoked_certificate {
-      name       = "Verizon-Global-Root-CA"
+      name       = "vgw-${local.naming_suffix}"
       thumbprint = "912198EEF23DCAC40939312FEE97DD560BAE49B1"
     }
   }
-
-  tags = var.tags
 }

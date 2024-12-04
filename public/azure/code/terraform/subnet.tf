@@ -5,10 +5,10 @@ resource "azurerm_subnet" "main" {
   address_prefixes     = ["10.0.1.0/24"]
 
   delegation {
-    name = "delegation"
+    name = "snet-${local.naming_suffix}"
 
     service_delegation {
-      name    = "Microsoft.ContainerInstance/containerGroups"
+      name    = "snet-${local.naming_suffix}"
       actions = ["Microsoft.Network/virtualNetworks/subnets/join/action", "Microsoft.Network/virtualNetworks/subnets/prepareNetworkPolicies/action"]
     }
   }

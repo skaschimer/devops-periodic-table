@@ -5,7 +5,7 @@ resource "azurerm_kubernetes_cluster" "main" {
   dns_prefix          = "exampleaks1"
 
   default_node_pool {
-    name       = "default"
+    name       = "aks-${local.naming_suffix}"
     node_count = 1
     vm_size    = "Standard_D2_v2"
   }

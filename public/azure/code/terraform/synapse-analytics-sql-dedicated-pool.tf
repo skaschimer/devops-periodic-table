@@ -3,6 +3,5 @@ resource "azurerm_synapse_sql_pool" "main" {
   synapse_workspace_id = azurerm_synapse_workspace.main.id
   sku_name             = "DW100c"
   create_mode          = "Default"
-
-  tags = var.tags
+  storage_account_type = "GRS"
 }

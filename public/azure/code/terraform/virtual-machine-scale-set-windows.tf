@@ -1,11 +1,12 @@
 resource "azurerm_windows_virtual_machine_scale_set" "main" {
-  name                = "vmss-${local.naming_suffix}"
-  resource_group_name = azurerm_resource_group.main.name
-  location            = azurerm_resource_group.main.location
-  sku                 = "Standard_F2"
-  instances           = 1
-  admin_password      = "P@55w0rd1234!"
-  admin_username      = "adminuser"
+  name                 = "vmss-${local.naming_suffix}"
+  resource_group_name  = azurerm_resource_group.main.name
+  location             = azurerm_resource_group.main.location
+  sku                  = "Standard_F2"
+  instances            = 1
+  admin_password       = "P@55w0rd1234!"
+  admin_username       = "adminuser"
+  computer_name_prefix = "vm-"
 
   source_image_reference {
     publisher = "MicrosoftWindowsServer"
@@ -20,15 +21,13 @@ resource "azurerm_windows_virtual_machine_scale_set" "main" {
   }
 
   network_interface {
-    name    = "main"
+    name    = "vmss-${local.naming_suffix}"
     primary = true
 
     ip_configuration {
-      name      = "internal"
+      name      = "vmss-${local.naming_suffix}"
       primary   = true
       subnet_id = azurerm_subnet.internal.id
     }
   }
-
-  tags = var.tags
 }

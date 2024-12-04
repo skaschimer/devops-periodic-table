@@ -6,9 +6,7 @@ resource "azurerm_vpn_site" "main" {
   address_cidrs       = ["10.0.0.0/24"]
 
   link {
-    name       = "link1"
+    name       = "vst-${local.naming_suffix}"
     ip_address = "10.0.0.1"
   }
-
-  tags = var.tags
 }

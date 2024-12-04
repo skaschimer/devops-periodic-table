@@ -4,7 +4,7 @@ resource "azurerm_network_security_group" "main" {
   resource_group_name = azurerm_resource_group.main.name
 
   security_rule {
-    name                       = "test123"
+    name                       = "nsg-${local.naming_suffix}"
     priority                   = 100
     direction                  = "Inbound"
     access                     = "Allow"

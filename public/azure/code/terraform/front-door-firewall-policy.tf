@@ -8,7 +8,7 @@ resource "azurerm_frontdoor_firewall_policy" "main" {
   custom_block_response_body        = "PGh0bWw+CjxoZWFkZXI+PHRpdGxlPkhlbGxvPC90aXRsZT48L2hlYWRlcj4KPGJvZHk+CkhlbGxvIHdvcmxkCjwvYm9keT4KPC9odG1sPg=="
 
   custom_rule {
-    name                           = "Rule1"
+    name                           = "fdfp-${local.naming_suffix}"
     enabled                        = true
     priority                       = 1
     rate_limit_duration_in_minutes = 1
@@ -25,7 +25,7 @@ resource "azurerm_frontdoor_firewall_policy" "main" {
   }
 
   custom_rule {
-    name                           = "Rule2"
+    name                           = "fdfp-${local.naming_suffix}"
     enabled                        = true
     priority                       = 2
     rate_limit_duration_in_minutes = 1
@@ -96,6 +96,4 @@ resource "azurerm_frontdoor_firewall_policy" "main" {
     type    = "Microsoft_BotManagerRuleSet"
     version = "1.0"
   }
-
-  tags = var.tags
 }

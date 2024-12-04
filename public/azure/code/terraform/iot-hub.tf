@@ -1,17 +1,18 @@
 resource "azurerm_iothub" "main" {
-  name                = "iot-${local.naming_suffix}"
-  resource_group_name = azurerm_resource_group.main.name
-  location            = azurerm_resource_group.main.location
+  name                         = "iot-${local.naming_suffix}"
+  resource_group_name          = azurerm_resource_group.main.name
+  location                     = azurerm_resource_group.main.location
+  local_authentication_enabled = false
 
   sku {
-    name     = "S1"
+    name     = "iot-${local.naming_suffix}"
     capacity = "1"
   }
 
   endpoint {
     type                       = "AzureIotHub.StorageContainer"
     connection_string          = azurerm_storage_account.main.primary_blob_connection_string
-    name                       = "export"
+    name                       = "iot-${local.naming_suffix}"
     batch_frequency_in_seconds = 60
     max_chunk_size_in_bytes    = 10485760
     container_name             = azurerm_storage_container.main.name
@@ -22,11 +23,11 @@ resource "azurerm_iothub" "main" {
   endpoint {
     type              = "AzureIotHub.EventHub"
     connection_string = azurerm_eventhub_authorization_rule.main.primary_connection_string
-    name              = "export2"
+    name              = "iot-${local.naming_suffix}"
   }
 
   route {
-    name           = "export"
+    name           = "iot-${local.naming_suffix}"
     source         = "DeviceMessages"
     condition      = "true"
     endpoint_names = ["export"]
@@ -34,7 +35,7 @@ resource "azurerm_iothub" "main" {
   }
 
   route {
-    name           = "export2"
+    name           = "iot-${local.naming_suffix}"
     source         = "DeviceMessages"
     condition      = "true"
     endpoint_names = ["export2"]
