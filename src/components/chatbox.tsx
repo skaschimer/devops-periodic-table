@@ -1,4 +1,3 @@
-// src/components/ChatBox.tsx
 import React, { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -71,7 +70,8 @@ export const ChatBox: React.FC<ChatBoxProps> = ({ prompt }) => {
       const decoder = new TextDecoder('utf-8');
       let botMessageContent = '';
 
-      while (true) {
+      let doneReading = false;
+      while (!doneReading) {
         const { value, done } = await reader.read();
         if (done) break;
 
@@ -84,6 +84,7 @@ export const ChatBox: React.FC<ChatBoxProps> = ({ prompt }) => {
 
         for (const line of lines) {
           if (line === 'data: [DONE]') {
+            doneReading = true;
             break;
           }
           if (line.startsWith('data: ')) {
@@ -103,10 +104,10 @@ export const ChatBox: React.FC<ChatBoxProps> = ({ prompt }) => {
       }
     } catch (error) {
       console.error('Error interacting with OpenAI API:', error);
+    } finally {
+      setIsLoading(false);
+      setUserInput(''); // Clear the input field
     }
-
-    setIsLoading(false);
-    setUserInput(''); // Clear the input field
   };
 
   const CodeBlock: React.FC<CodeProps> = ({
@@ -117,43 +118,45 @@ export const ChatBox: React.FC<ChatBoxProps> = ({ prompt }) => {
     ...props
   }) => {
     const [isCopied, setIsCopied] = useState(false);
-  
+
     const handleCopy = () => {
       navigator.clipboard.writeText(String(children)).then(() => {
         setIsCopied(true);
         setTimeout(() => setIsCopied(false), 2000); // Reset after 2 seconds
       });
     };
-  
-    return !inline ? (
-      <div className="relative my-4 border-gray-500">
-        <div className="overflow-x-auto">
-          <pre className="rounded-lg bg-muted p-4 font-mono text-sm">
-            <code className={className} {...props}>
-              {children}
-            </code>
-          </pre>
-        </div>
-        <button
-          onClick={handleCopy}
-          className="absolute top-2 right-2 p-2 rounded bg-white dark:bg-black hover:bg-gray-200 dark:hover:bg-gray-700"
-        >
-          {isCopied ? (
-            <Icons.Check className="w-4 h-4" />
-          ) : (
-            <Icons.Copy className="w-4 h-4" />
-          )}
-        </button>
+
+    if (inline) {
+      return (
+        <code className="bg-neutral-50 dark:bg-neutral-900 px-1 rounded" {...props}>
+          {children}
+        </code>
+      );
+    }
+
+    return (
+      <div className="relative my-4 w-full">
+        <pre className="relative overflow-x-auto rounded-lg bg-neutral-50 dark:bg-neutral-900 p-4 font-mono text-sm w-full">
+          <code className={className} {...props}>
+            {children}
+          </code>
+          <button
+            onClick={handleCopy}
+            className="absolute top-2 right-2 p-2 rounded bg-white dark:bg-black hover:bg-neutral-200 dark:hover:bg-neutral-700"
+          >
+            {isCopied ? (
+              <Icons.Check className="w-4 h-4" />
+            ) : (
+              <Icons.Copy className="w-4 h-4" />
+            )}
+          </button>
+        </pre>
       </div>
-    ) : (
-      <code className="bg-gray-200 dark:bg-gray-700 px-1 rounded" {...props}>
-        {children}
-      </code>
     );
   };
 
   return (
-    <div className="flex flex-col my-4 space-y-4">
+    <div className="flex flex-col my-4 space-y-4 w-full">
       <div className="flex space-x-2">
         <Input
           type="text"
@@ -175,39 +178,39 @@ export const ChatBox: React.FC<ChatBoxProps> = ({ prompt }) => {
       {botResponse && (
         <Card>
           <CardContent>
-          <div className="prose dark:prose-invert mt-6 space-y-6">
-          <ReactMarkdown
-            remarkPlugins={[remarkGfm]}
-            components={{
-              a: ({ href, children, ...props }) => (
-                <a
-                  href={href}
-                  className="inline-flex items-center space-x-2 px-1 py-0 border border-transparent hover:border-black dark:hover:border-white rounded-md text-black dark:text-white font-semibold transition"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  {...props}
-                >
-                  <span>{children}</span>
-                  <Icons.ExternalLink className="w-4 h-4" />
-                </a>
-              ),
-              ul: ({ children, ...props }) => (
-                <ul className="list-disc pl-10 space-y-2 space-x-2" {...props}>
-                  {children}
-                </ul>
-              ),
-              li: ({ children, ...props }) => (
-                <li className="flex items-start space-x-2 space-x-2" {...props}>
-                  <span className="text-primary">•</span> {/* Customize bullet style here */}
-                  <span>{children}</span>
-                </li>
-              ),
-              code: CodeBlock,
-            }}
-          >
-            {botResponse}
-          </ReactMarkdown>
-          </div>
+            <div className="prose dark:prose-invert mt-6 space-y-6 w-full max-w-none">
+              <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
+                components={{
+                  a: ({ href, children, ...props }) => (
+                    <a
+                      href={href}
+                      className="inline-flex items-center space-x-2 px-2 py-0 border border-transparent hover:border-black dark:hover:border-white rounded-md text-black dark:text-white hover:bg-neutral-50 dark:hover:bg-neutral-900 transition"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      {...props}
+                    >
+                      <span>{children}</span>
+                      <Icons.ExternalLink className="w-4 h-4" />
+                    </a>
+                  ),
+                  ul: ({ children, ...props }) => (
+                    <ul className="list-disc pl-5 space-y-2" {...props}>
+                      {children}
+                    </ul>
+                  ),
+                  li: ({ children, ...props }) => (
+                    <li className="flex items-start space-x-2" {...props}>
+                      <span className="text-primary">•</span>
+                      <span>{children}</span>
+                    </li>
+                  ),
+                  code: CodeBlock,
+                }}
+              >
+                {botResponse}
+              </ReactMarkdown>
+            </div>
           </CardContent>
         </Card>
       )}
