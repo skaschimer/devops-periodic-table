@@ -1,12 +1,20 @@
-// src/components/ChatBox.tsx
 import React, { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import ReactMarkdown from 'react-markdown';
+import ReactMarkdown, { Components } from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Icons } from '@/components/ui/icons';
-import { CodeProps } from 'react-markdown/lib/ast-to-react';
+import { LoadingSpinner } from '@/components/ui/loading-spinner';
+import { ReactMarkdownProps } from 'react-markdown/lib/complex-types';
+import {
+  CodeComponent,
+  LiProps,
+} from 'react-markdown/lib/ast-to-react';
+import {
+  AnchorHTMLAttributes,
+} from 'react';
+import { URLBox } from './ui/url-box';
 
 type ChatBoxProps = {
   prompt: string;
@@ -17,6 +25,7 @@ export const ChatBox: React.FC<ChatBoxProps> = ({ prompt }) => {
   const [botResponse, setBotResponse] = useState<string>('');
   const [requestCount, setRequestCount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const [isStreaming, setIsStreaming] = useState(false);
 
   const MAX_REQUESTS = 5;
 
@@ -32,11 +41,12 @@ export const ChatBox: React.FC<ChatBoxProps> = ({ prompt }) => {
       alert('You have reached the maximum number of requests.');
       return;
     }
-
+  
     setRequestCount(requestCount + 1);
     setIsLoading(true);
+    setIsStreaming(false); // Reset streaming state
     setBotResponse(''); // Clear previous response
-
+  
     try {
       const response = await fetch('/api/generate', {
         method: 'POST',
@@ -44,7 +54,7 @@ export const ChatBox: React.FC<ChatBoxProps> = ({ prompt }) => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          model: 'gpt-3.5-turbo',
+          model: 'gpt-4o',
           messages: [
             {
               role: 'system',
@@ -55,35 +65,36 @@ export const ChatBox: React.FC<ChatBoxProps> = ({ prompt }) => {
               content: userInput,
             },
           ],
-          temperature: 0.4,
-          max_tokens: 500,
+          temperature: 0.2,
+          max_tokens: 1000,
           stream: true,
         }),
       });
-
-      console.log('Response:', response);
-
+  
       if (!response.ok || !response.body) {
         throw new Error(response.statusText);
       }
-
+  
       const reader = response.body.getReader();
       const decoder = new TextDecoder('utf-8');
       let botMessageContent = '';
-
-      while (true) {
+  
+      let doneReading = false;
+      setIsStreaming(true); // Stream starts here
+      while (!doneReading) {
         const { value, done } = await reader.read();
         if (done) break;
-
+  
         const chunkValue = decoder.decode(value);
-
+  
         const lines = chunkValue
           .split(/\r?\n/)
           .map((line) => line.trim())
           .filter((line) => line !== '');
-
+  
         for (const line of lines) {
           if (line === 'data: [DONE]') {
+            doneReading = true;
             break;
           }
           if (line.startsWith('data: ')) {
@@ -103,13 +114,15 @@ export const ChatBox: React.FC<ChatBoxProps> = ({ prompt }) => {
       }
     } catch (error) {
       console.error('Error interacting with OpenAI API:', error);
+    } finally {
+      setIsLoading(false);
+      setIsStreaming(false);
+      setUserInput('');
     }
-
-    setIsLoading(false);
-    setUserInput(''); // Clear the input field
   };
 
-  const CodeBlock: React.FC<CodeProps> = ({
+  // Custom Code Block Component
+  const CodeBlock: CodeComponent = ({
     node,
     inline,
     className,
@@ -117,26 +130,35 @@ export const ChatBox: React.FC<ChatBoxProps> = ({ prompt }) => {
     ...props
   }) => {
     const [isCopied, setIsCopied] = useState(false);
-  
+
     const handleCopy = () => {
       navigator.clipboard.writeText(String(children)).then(() => {
         setIsCopied(true);
         setTimeout(() => setIsCopied(false), 2000); // Reset after 2 seconds
       });
     };
-  
-    return !inline ? (
-      <div className="relative my-4 border-gray-500">
-        <div className="overflow-x-auto">
-          <pre className="rounded-lg bg-muted p-4 font-mono text-sm">
-            <code className={className} {...props}>
-              {children}
-            </code>
-          </pre>
-        </div>
+
+    if (inline) {
+      return (
+        <code
+          className="bg-neutral-50 dark:bg-neutral-900 px-1 rounded"
+          {...props}
+        >
+          {children}
+        </code>
+      );
+    }
+
+    return (
+      <div className="relative my-4 w-full">
+        <pre className="overflow-x-auto rounded-lg bg-neutral-50 dark:bg-neutral-900 p-4 font-mono text-sm w-full max-w-full break-words">
+          <code className={className} {...props}>
+            {children}
+          </code>
+        </pre>
         <button
           onClick={handleCopy}
-          className="absolute top-2 right-2 p-2 rounded bg-white dark:bg-black hover:bg-gray-200 dark:hover:bg-gray-700"
+          className="absolute top-2 right-2 p-2 rounded bg-white dark:bg-black hover:bg-neutral-200 dark:hover:bg-neutral-700"
         >
           {isCopied ? (
             <Icons.Check className="w-4 h-4" />
@@ -145,15 +167,44 @@ export const ChatBox: React.FC<ChatBoxProps> = ({ prompt }) => {
           )}
         </button>
       </div>
-    ) : (
-      <code className="bg-gray-200 dark:bg-gray-700 px-1 rounded" {...props}>
-        {children}
-      </code>
     );
   };
 
+  // Custom Link Component
+  const CustomLink: React.FC<
+    AnchorHTMLAttributes<HTMLAnchorElement> & ReactMarkdownProps
+  > = ({ href, children, ...props }) => (
+    <URLBox href={href || '#'} text={String(children)} />
+  );
+
+  // Custom List Item Component
+  const CustomListItem: React.FC<LiProps> = ({ children, ...props }) => (
+    <li className="list-disc list-outside ml-5" {...props}>
+      <span>{children}</span>
+    </li>
+  );
+
+
+  // Components Object
+  const components: Components = {
+    ul: ({ children, ...props }) => (
+      <ul className="list-disc list-inside ml-5" {...props}>
+        {children}
+      </ul>
+    ),
+    ol: ({ children, ...props }) => (
+      <ol className="list-decimal list-inside ml-5" {...props}>
+        {children}
+      </ol>
+    ),
+    li: CustomListItem,
+    a: CustomLink,
+    code: CodeBlock,
+    // ... other components if necessary
+  };  
+
   return (
-    <div className="flex flex-col my-4 space-y-4">
+    <div className="flex flex-col my-4 space-y-4 w-full">
       <div className="flex space-x-2">
         <Input
           type="text"
@@ -163,24 +214,26 @@ export const ChatBox: React.FC<ChatBoxProps> = ({ prompt }) => {
           placeholder="Type your message..."
           disabled={isLoading}
         />
-        <Button variant="secondary" onClick={handleChatSubmit} disabled={isLoading}>
+        <Button
+          variant="secondary"
+          onClick={handleChatSubmit}
+          disabled={isLoading}
+        >
           <Icons.Send className="w-4 h-4" />
         </Button>
       </div>
-      {isLoading && (
+      {isLoading && !isStreaming && (
         <div className="flex justify-center items-center">
-          <p>Loading...</p>
+          <LoadingSpinner size={32} className="text-primary" />
         </div>
       )}
       {botResponse && (
         <Card>
           <CardContent>
-            <div className="prose dark:prose-invert mt-6">
+            <div className="prose dark:prose-invert mt-6 space-y-6 w-full">
               <ReactMarkdown
                 remarkPlugins={[remarkGfm]}
-                components={{
-                  code: CodeBlock,
-                }}
+                components={components}
               >
                 {botResponse}
               </ReactMarkdown>

@@ -52,5 +52,5 @@ export default function Page({ params }: { params: { id: string } }) {
     armCode: armCodeSnippet,
   };
 
-  return <Sidebar activeElement={elementWithCodeSnippet} open={true} />;
+  return <Sidebar activeElement={elementWithCodeSnippet} />;
 }
