@@ -6,6 +6,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Icons } from '@/components/ui/icons';
+import { CodeProps } from 'react-markdown/lib/ast-to-react';
 
 type ChatBoxProps = {
   prompt: string;
@@ -60,6 +61,8 @@ export const ChatBox: React.FC<ChatBoxProps> = ({ prompt }) => {
         }),
       });
 
+      console.log('Response:', response);
+
       if (!response.ok || !response.body) {
         throw new Error(response.statusText);
       }
@@ -106,16 +109,22 @@ export const ChatBox: React.FC<ChatBoxProps> = ({ prompt }) => {
     setUserInput(''); // Clear the input field
   };
 
-  const CodeBlock = ({ node, inline, className, children, ...props }) => {
+  const CodeBlock: React.FC<CodeProps> = ({
+    node,
+    inline,
+    className,
+    children,
+    ...props
+  }) => {
     const [isCopied, setIsCopied] = useState(false);
-
+  
     const handleCopy = () => {
-      navigator.clipboard.writeText(children).then(() => {
+      navigator.clipboard.writeText(String(children)).then(() => {
         setIsCopied(true);
         setTimeout(() => setIsCopied(false), 2000); // Reset after 2 seconds
       });
     };
-
+  
     return !inline ? (
       <div className="relative my-4 border-gray-500">
         <div className="overflow-x-auto">
