@@ -27,4 +27,4 @@ jobs:
         context: .
         file: docker/Dockerfile
         push: true
-        tags: ${{ secrets.DOCKER_USERNAME }}/azure-periodic-table-dockerversion:latest
+        tags: ${{ secrets.DOCKER_USERNAME }}/devops-periodic-table-dockerversion:latest
