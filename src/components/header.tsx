@@ -14,33 +14,24 @@ export default function Header() {
     <nav className="flex w-full">
       <Sheet open={open} onOpenChange={() => setOpen((prev) => !prev)}>
         <SheetContent>
-          <div className="flex flex-col w-full justify-center items-center">
+          <div className="flex flex-col items-center justify-center w-full">
             <Link
-              className="flex w-full my-2 justify-start items-center"
+              className="flex items-center justify-start w-full my-2"
               href={siteConfig.github}
               target="_blank"
             >
               <Button className="" variant={'ghost'}>
-                <Icons.GitHub className="h-6 w-6 fill-current" />
-                <span className="px-4 font-bold text-lg">GitHub</span>
+                <Icons.GitHub className="w-6 h-6 fill-current" />
+                <span className="px-4 text-lg font-bold">GitHub</span>
               </Button>
             </Link>
             <Link
-              className="flex my-2 w-full justify-start items-center"
-              href={siteConfig.twitter}
-            >
-              <Button variant={'ghost'}>
-                <Icons.Twitter className="h-6 w-6 fill-current" />
-                <span className="px-4 font-bold text-lg">Twitter</span>
-              </Button>
-            </Link>
-            <Link
-              className="flex w-full my-2 justify-start items-center"
+              className="flex items-center justify-start w-full my-2"
               href={siteConfig.linkedin}
             >
               <Button variant={'ghost'}>
-                <Icons.Linkedin className="h-6 w-6 fill-current" />
-                <span className="px-4 font-bold text-lg">LinkedIn</span>
+                <Icons.Linkedin className="w-6 h-6 fill-current" />
+                <span className="px-4 text-lg font-bold">LinkedIn</span>
               </Button>
             </Link>
 
@@ -51,17 +42,17 @@ export default function Header() {
                   : setTheme(themes.DARK)
               }
               variant={'ghost'}
-              className="w-full flex justify-start items-center my-2"
+              className="flex items-center justify-start w-full my-2"
             >
               {theme === themes.DARK ? (
-                <div className="flex my-2 justify-start items-center">
-                  <Icons.Moon className="h-6 w-6 fill-current" />
-                  <span className="px-4 font-bold text-lg">Dark Mode</span>
+                <div className="flex items-center justify-start my-2">
+                  <Icons.Moon className="w-6 h-6 fill-current" />
+                  <span className="px-4 text-lg font-bold">Dark Mode</span>
                 </div>
               ) : (
-                <div className="flex my-2 justify-start items-center">
-                  <Icons.Sun className="h-6 w-6 fill-current" />
-                  <span className="px-4 font-bold text-lg">Light Mode</span>
+                <div className="flex items-center justify-start my-2">
+                  <Icons.Sun className="w-6 h-6 fill-current" />
+                  <span className="px-4 text-lg font-bold">Light Mode</span>
                 </div>
               )}
             </Button>
@@ -69,22 +60,22 @@ export default function Header() {
         </SheetContent>
       </Sheet>
 
-      <div className="flex justify-start items-center">
-        <Icons.Logo className="h-5 w-5 text-black dark:text-white mr-2" />
-        <span className="font-bold text-xl text-black dark:text-white">
+      <div className="flex items-center justify-start">
+        <Icons.Logo className="w-5 h-5 mr-2 text-black dark:text-white" />
+        <span className="text-xl font-bold text-black dark:text-white">
           {siteConfig.title}
         </span>
       </div>
       <div className="flex ml-auto md:hidden">
         <Button onClick={() => setOpen((prev) => !prev)} variant={'ghost'}>
-          <Icons.Menu className="h-5 w-5 fill-current" />
+          <Icons.Menu className="w-5 h-5 fill-current" />
         </Button>
       </div>
 
-      <div className="ml-auto hidden md:flex">
+      <div className="hidden ml-auto md:flex">
         <a href={siteConfig.github} target="_blank">
           <Button className="" variant={'ghost'}>
-            <Icons.GitHub className="h-5 w-5 fill-current" />
+            <Icons.GitHub className="w-5 h-5 fill-current" />
           </Button>
         </a>
         <a
@@ -93,16 +84,7 @@ export default function Header() {
           referrerPolicy="no-referrer"
         >
           <Button variant={'ghost'}>
-            <Icons.Linkedin className="h-5 w-5 fill-current" />
-          </Button>
-        </a>
-        <a
-          href={siteConfig.twitter}
-          target="_blank"
-          referrerPolicy="no-referrer"
-        >
-          <Button variant={'ghost'}>
-            <Icons.Twitter className="h-5 w-5 fill-current" />
+            <Icons.Linkedin className="w-5 h-5 fill-current" />
           </Button>
         </a>
         <Button
@@ -114,9 +96,9 @@ export default function Header() {
           variant={'ghost'}
         >
           {theme === themes.DARK ? (
-            <Icons.Moon className="h-5 w-5 fill-current" />
+            <Icons.Moon className="w-5 h-5 fill-current" />
           ) : (
-            <Icons.Sun className="h-5 w-5 fill-current" />
+            <Icons.Sun className="w-5 h-5 fill-current" />
           )}
         </Button>
       </div>

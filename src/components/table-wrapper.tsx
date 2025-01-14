@@ -58,22 +58,21 @@ export default function TableWrapper({ children }: { children: JSX.Element }) {
         isFullScreen ? 'p-0' : 'p-8'
       }`}
     >
-      <div className="static lg:relative top-0 left-0 w-full lg:flex flex-col items-center justify-center">
+      <div className="static top-0 left-0 flex-col items-center justify-center w-full lg:relative lg:flex">
         {isFullScreen ? null : (
           <>
             <Header />
-            <div className="flex flex-col gap-2 justify-center w-full md:items-center items-center mt-2 mb-8">
+            <div className="flex flex-col items-center justify-center w-full gap-2 mt-2 mb-8 md:items-center">
               {/* Wrapper div to house Azure icon, main title, and subtitle */}
               <div className="flex items-center justify-center">
-                <Icons.Azure className="h-12 w-12 md:h-16 md:w-16 self-center mr-4" />
                 <div className="flex flex-col">
                   <h1 className="md:text-4xl font-bold leading-tight tracking-tighter lg:leading-[1.1] text-2xl">
-                    The Azure Periodic Table
+                    The DevOps Periodic Table
                   </h1>
                   <Label className="mt-2">
                     {isMobile
-                      ? 'Supercharge your productivity in Azure.'
-                      : 'Bringing together core Azure content to supercharge your productivity.'}
+                      ? 'Supercharge your productivity in DevOps.'
+                      : 'Bringing together core DevOps content to supercharge your productivity.'}
                   </Label>
                 </div>
               </div>

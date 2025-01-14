@@ -13,7 +13,7 @@ export function Download() {
     a.href = url;
 
     // This part will prompt the user to save the image as a download
-    a.download = 'azure-periodic-table.png'; // or you could give it a custom name here
+    a.download = 'devops-periodic-table.png'; // or you could give it a custom name here
     a.click();
   };
   return (
@@ -22,7 +22,7 @@ export function Download() {
       onClick={() => {
         downloadFile();
       }}
-      className="mx-2 flex"
+      className="flex mx-2"
     >
       <DownloadIcon className="w-4 h-4" />
       <span className="ml-2">Download</span>

@@ -2,14 +2,9 @@
   "name": "azure-periodic-table",
   "contributors": [
     {
-      "name": "Justin O'Connor",
-      "email": "justin.oconnor@onwardplatforms.com",
-      "url": "http://justinoconnor.codes"
-    },
-    {
-      "name": "Reilly O'Donnell",
-      "email": "odonnell.reilly.j@gmail.com",
-      "url": "https://reilly.dev/"
+      "name": "Steve Kaschimer",
+      "email": "steve@skratsch.com",
+      "url": "https://skratsch.com"
     }
   ],
   "version": "0.1.0",

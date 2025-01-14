@@ -2,7 +2,6 @@ import {
   LucideProps,
   Moon,
   SunMedium,
-  Twitter,
   Linkedin,
   Menu,
   Check,
@@ -11,6 +10,7 @@ import {
   Wand2,
   type Icon as LucideIcon,
   Layers,
+  Workflow,
   ExternalLink,
 } from 'lucide-react';
 
@@ -19,7 +19,6 @@ export type Icon = LucideIcon;
 export const Icons = {
   Sun: SunMedium,
   Moon,
-  Twitter,
   Linkedin,
   Menu,
   Check,
@@ -27,7 +26,7 @@ export const Icons = {
   Send,
   ExternalLink,
   Wand2,
-  Logo: Layers,
+  Logo: Workflow,
   GitHub: (props: LucideProps) => (
     <svg viewBox="0 0 438.549 438.549" {...props}>
       <path

@@ -18,9 +18,9 @@ declare global {
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'The Azure Periodic Table',
+  title: 'The DevOps Periodic Table',
   description:
-    'An essential resource for cloud developers, engineers, architects, and consultants seeking to understand Azure services. It provides links to Microsoft Learn documentation, examples of infrastructure as code using Terraform, Bicep, and ARM templates, as well as direct links to the Azure Portal for managing and deploying new resources.',
+    'An essential resource for cloud developers, engineers, architects, and consultants seeking to understand DevOps services.',
 };
 
 export default function RootLayout({
@@ -32,17 +32,17 @@ export default function RootLayout({
     <html lang="en" style={{ width: '100%' }}>
       <Head>
         <title>Azure Periodic Table</title>
-        <meta property="og:title" content="Azure Periodic Table" key="title" />
+        <meta property="og:title" content="DevOps Periodic Table" key="title" />
         <meta
           property="og:image"
-          content="https://azure-periodic-table.onwardplatforms.com/periodic-table.png"
+          content="./periodic-table.png"
         />
-        <meta property="og:image:alt" content="The Azure Periodic Table" />
+        <meta property="og:image:alt" content="The DevOps Periodic Table" />
         <meta
           property="twitter:image"
-          content="https://azure-periodic-table.onwardplatforms.com/periodic-table.png"
+          content="./periodic-table.png"
         />
-        <meta property="twitter:image:alt" content="The Azure Periodic Table" />
+        <meta property="twitter:image:alt" content="The DevOps Periodic Table" />
       </Head>
       <Script
         async

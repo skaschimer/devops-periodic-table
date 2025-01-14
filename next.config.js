@@ -4,7 +4,7 @@ const nextConfig = {
   images: {
     unoptimized: true,
     loader: 'imgix',
-    path: 'https://onwardplatforms.github.io',
+    path: 'https://skaschimer.github.io',
   },
 };
 

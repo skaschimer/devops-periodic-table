@@ -16,7 +16,7 @@ export default function Search({ setTextSearch, className }: props) {
       <CommandInput
         onValueChange={(value) => setTextSearch(value)}
         className={`bg-transparent w-96 dark:text-white text-black`}
-        placeholder="Search Azure resources..."
+        placeholder="Search DevOps resources..."
       />
     </Command>
   );

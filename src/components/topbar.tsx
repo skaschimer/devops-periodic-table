@@ -11,7 +11,7 @@ import {
   DropdownMenuTrigger,
 } from './ui/dropdown-menu';
 import { categoryData } from './periodic-table';
-import { Item } from '@/app/data/azure';
+import { Item } from '@/app/data/devops';
 import { Categories } from '@/app/constants';
 
 export default function Topbar({
@@ -32,13 +32,13 @@ export default function Topbar({
   setActiveCategory: Function;
 }) {
   return (
-    <div className="flex justify-center  items-center w-full border-b border-border p-4">
-      <div className="hidden lg:flex flex-1 mr-auto w-full xl:w-auto">
+    <div className="flex items-center justify-center w-full p-4 border-b border-border">
+      <div className="flex-1 hidden w-full mr-auto lg:flex xl:w-auto">
         <Share />
         <Download />
       </div>
 
-      <div className="flex justify-center items-center w-full xl:w-auto">
+      <div className="flex items-center justify-center w-full xl:w-auto">
         <Search className="mx-2 flex-2" setTextSearch={setTextSearch} />
         <div className="flex xl:hidden">
           <DropdownMenu>
@@ -47,17 +47,17 @@ export default function Topbar({
                 onClick={() => setOpen((prev: boolean) => !prev)}
                 variant={'secondary'}
               >
-                <FilterIcon className="h-4 w-4" />
+                <FilterIcon className="w-4 h-4" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className=" justify-center items-center flex-col max-h-52 overflow-scroll">
+            <DropdownMenuContent className="flex-col items-center justify-center overflow-scroll  max-h-52">
               {categoryData.map((item, i) => {
                 const isActive =
                   activeCategory === null || activeCategory === item.name;
                 return (
                   <DropdownMenuItem
                     key={i}
-                    className="justify-center items-center"
+                    className="items-center justify-center"
                   >
                     <Button
                       onClick={() => {
@@ -74,7 +74,7 @@ export default function Topbar({
                       <div
                         className={`px-1 lg:mx-0 w-6 h-6 rounded my-1 ${item.color}`}
                       ></div>
-                      <span className="text-sm px-2">{item.name}</span>
+                      <span className="px-2 text-sm">{item.name}</span>
                     </Button>
                   </DropdownMenuItem>
                 );
@@ -84,7 +84,7 @@ export default function Topbar({
         </div>
       </div>
 
-      <div className=" hidden lg:flex flex-1 justify-end items-center ml-auto">
+      <div className="items-center justify-end flex-1 hidden ml-auto  lg:flex">
         <Button
           variant={'secondary'}
           onClick={() => {

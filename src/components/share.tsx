@@ -25,17 +25,17 @@ export function Share() {
     <Popover>
       <PopoverTrigger asChild>
         <Button variant={'secondary'}>
-          <ShareIcon className="mr-2 w-4 h-4" />
+          <ShareIcon className="w-4 h-4 mr-2" />
           <span className="">Share</span>
         </Button>
       </PopoverTrigger>
       <PopoverContent align="end" className="w-[520px]">
         <div className="flex flex-col space-y-2 text-center sm:text-left">
           <h3 className="text-lg font-semibold">
-            Copy the link or share to Twitter or LinkedIn below
+            Copy the link or share to LinkedIn below
           </h3>
         </div>
-        <div className="flex items-center space-x-2 pt-4">
+        <div className="flex items-center pt-4 space-x-2">
           <div className="grid flex-1 gap-2">
             <Label htmlFor="link" className="sr-only">
               Link
@@ -60,32 +60,18 @@ export function Share() {
             {copied ? <Check width={16} /> : <CopyIcon width={16} />}
           </Button>
         </div>
-        <div className="flex flex-col justify-center items-start">
-          <div className="flex justify-center items-center my-4">
-            <a
-              target="_blank"
-              rel="noopener noreferrer"
-              href={socialConfig.twitter + socialConfig.tweet}
-            >
-              <Button
-                variant={'outline'}
-                className="mx-2 flex justify-center items-center"
-              >
-                <Icons.Twitter className="h-4 w-4 fill-current mx-2" />
-                <span>Twitter</span>
-              </Button>
-            </a>
-
+        <div className="flex flex-col items-start justify-center">
+          <div className="flex items-center justify-center my-4">
             <a
               target="_blank"
               rel="noopener noreferrer"
               href={socialConfig.linkedin}
             >
               <Button
-                className="mx-2 flex justify-center items-center"
+                className="flex items-center justify-center mx-2"
                 variant={'outline'}
               >
-                <Icons.Linkedin className="h-4 w-4 fill-current mx-2" />
+                <Icons.Linkedin className="w-4 h-4 mx-2 fill-current" />
                 <span>LinkedIn</span>
               </Button>
             </a>

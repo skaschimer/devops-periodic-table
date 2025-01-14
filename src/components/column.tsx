@@ -3,7 +3,7 @@
 import type { Categories } from '@/app/constants';
 import type { CategoryData } from './category-selector';
 import Image from 'next/image';
-import type { Item } from '@/app/data/azure';
+import type { Item } from '@/app/data/devops';
 import { useLayoutEffect, useRef } from 'react';
 import useMobile from '@/custom-hooks/use-mobile';
 import { prefix } from '@/prefix';
@@ -138,8 +138,8 @@ const Cell: React.FC<CellProps> = ({
         }  dark:border-white border-black border m-0.5 p-1 ${colorOption} ${transparent} justify-center items-center cursor-pointer transition-all ${hoverScale} z-0 hover:z-10 `}
         aria-describedby={`${item.slug}-desc`}
       >
-        <div className="flex flex-col  relative h-full w-full">
-          <div className="flex w-full justify-between items-center">
+        <div className="relative flex flex-col w-full h-full">
+          <div className="flex items-center justify-between w-full">
             {item.icon ? (
               <figure>
                 <Image
@@ -166,7 +166,7 @@ const Cell: React.FC<CellProps> = ({
               zoomLevel === 2 ? 'text-[8px]' : 'text-[0.4rem]'
             }  h-full  overflow-hidden`}
           >
-            <span className="text-left break-words w-full mb-4">
+            <span className="w-full mb-4 text-left break-words">
               {item.name}
             </span>
           </p>

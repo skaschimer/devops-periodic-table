@@ -4,7 +4,7 @@ import Image from 'next/image';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-import type { Item } from '@/app/data/azure';
+import type { Item } from '@/app/data/devops';
 import { categoryData } from './periodic-table';
 import { prefix } from '@/prefix';
 import useMobile from '@/custom-hooks/use-mobile';
@@ -92,7 +92,7 @@ ALWAYS return valid markdown.
             alt={`icon for ${activeElement.name}`}
             src={`${prefix}${activeElement.icon}`}
           />
-          <h1 className="font-bold text-3xl">{toProperCase(activeElement.name)}</h1>
+          <h1 className="text-3xl font-bold">{toProperCase(activeElement.name)}</h1>
         </div>
       </SheetHeader>
 
@@ -134,7 +134,7 @@ ALWAYS return valid markdown.
                       href={activeElement.learnUrl}
                       text={isMobile ? 'Learn' : 'Microsoft Learn'}
                       size="md"
-                      className="mr-4 mb-2"
+                      className="mb-2 mr-4"
                       icon={<Icons.Microsoft width={20} height={20} />}
                     />
                   )}
@@ -143,7 +143,7 @@ ALWAYS return valid markdown.
                       href={activeElement.pricingReferenceUrl}
                       text={isMobile ? 'Cost' : 'Resource Cost'}
                       size="md"
-                      className="mr-4 mb-2"
+                      className="mb-2 mr-4"
                       icon={<Icons.Microsoft width={20} height={20} />}
                     />
                   )}
@@ -159,7 +159,7 @@ ALWAYS return valid markdown.
             <CardHeader>
               <div className="flex items-center space-x-2">
                 <CardTitle>Chat</CardTitle>
-                <div className="flex items-center bg-gray-200 dark:bg-gray-700 text-xs px-2 py-1 rounded">
+                <div className="flex items-center px-2 py-1 text-xs bg-gray-200 rounded dark:bg-gray-700">
                   <Icons.Wand2 width={16} height={16} className="mr-1" />
                   <span>Powered by AI</span>
                 </div>
@@ -225,7 +225,7 @@ ALWAYS return valid markdown.
                     <URLBox
                       href={activeElement.terraformUrl}
                       text="Official Documentation"
-                      className="mr-6 my-4"
+                      className="my-4 mr-6"
                       icon={<Icons.Terraform width={20} height={20} />}
                       size="md"
                     />
@@ -237,7 +237,7 @@ ALWAYS return valid markdown.
                     <URLBox
                       href={`https://learn.microsoft.com/en-us/azure/templates/${activeElement?.resource}/${activeElement?.entity}?pivots=deployment-language-bicep`}
                       text="Official Documentation"
-                      className="mr-6 my-4"
+                      className="my-4 mr-6"
                       icon={<Icons.Microsoft width={20} height={20} />}
                       size="md"
                     />
@@ -249,7 +249,7 @@ ALWAYS return valid markdown.
                     <URLBox
                       href={`https://learn.microsoft.com/en-us/azure/templates/${activeElement?.resource}/${activeElement?.entity}?pivots=deployment-language-arm-template`}
                       text="Official Documentation"
-                      className="mr-6 my-4"
+                      className="my-4 mr-6"
                       icon={<Icons.Microsoft width={20} height={20} />}
                       size="md"
                     />
@@ -277,7 +277,7 @@ ALWAYS return valid markdown.
                     href={activeElement.portalUrl}
                     text={isMobile ? 'Portal' : 'Azure Portal'}
                     size="md"
-                    className="mr-4 mb-2"
+                    className="mb-2 mr-4"
                     icon={<Icons.Azure width={20} height={20} />}
                   />
                 )}
@@ -285,14 +285,14 @@ ALWAYS return valid markdown.
                   href="https://shell.azure.com"
                   text={isMobile ? 'Shell' : 'Cloud Shell'}
                   size="md"
-                  className="mr-4 mb-2"
+                  className="mb-2 mr-4"
                   icon={<Icons.Azure width={20} height={20} />}
                 />
                 <URLBox
                   href="https://azure.microsoft.com/en-us/pricing/calculator/"
                   text={isMobile ? 'Pricing' : 'Pricing Calculator'}
                   size="md"
-                  className="mr-4 mb-2"
+                  className="mb-2 mr-4"
                   icon={<Icons.Microsoft width={20} height={20} />}
                 />
               </div>
