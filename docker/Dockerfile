@@ -1,4 +1,4 @@
-# Use the official Node.js image with Node.js version 16 or higher as the base image
+# Use the official Node.js image with Node.js version 20 or higher as the base image
 FROM node:20-alpine
 
 # Set the working directory inside the container
