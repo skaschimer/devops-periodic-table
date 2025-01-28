@@ -45,7 +45,7 @@
     "clsx": "^1.2.1",
     "cmdk": "^0.2.0",
     "eslint": "8.44.0",
-    "eslint-config-next": "13.4.9",
+    "eslint-config-next": "13.5.8",
     "highlight.js": "^11.10.0",
     "jspdf": "^2.5.1",
     "lowlight": "^2.9.0",
